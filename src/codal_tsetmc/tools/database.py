@@ -27,11 +27,15 @@ def fill_table_of_db_with_df(
 
 def read_table_by_conditions(table, variable="", value="", columns="*", conditions=""):
     query = f"SELECT {columns} FROM {table}"
-    if conditions != "":
-        query = f"{query} WHERE {conditions}"
-    
-    if variable != "" and value != "":
-        query = f"{query} WHERE {variable} = '{value}'"
+    where_clauses = []
+    if conditions:
+        where_clauses.append(conditions)
+
+    if variable and value:
+        where_clauses.append(f"{variable} = '{value}'")
+
+    if where_clauses:
+        query = f"{query} WHERE " + " AND ".join(where_clauses)
 
     return pd.read_sql(query, engine)
 
